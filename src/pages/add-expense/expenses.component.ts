@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core'
-import { NavController } from 'ionic-angular';
-import {Item} from './Item';
+import { Component, NgZone } from "@angular/core";
+import { ModalController, NavController, Platform} from 'ionic-angular';
+
 import {ExpensesService} from './expenses.service'
 
 @Component({
@@ -8,7 +8,7 @@ import {ExpensesService} from './expenses.service'
   // templateUrl: './app/expenses/expenses.component.html',
   template: `
   <div class="bar bar-header bar-dark">
-  <form (ngSubmit)="addExpense()">
+  <form (ngSubmit)="add()">
   <h1 class="title">Add Expense</h1>
       <ion-item>
         <ion-label>Title</ion-label>
@@ -33,16 +33,34 @@ import {ExpensesService} from './expenses.service'
     </div>`
   // styleUrls: [ './app/expenses/expenses.component.css' ]
 })
-export class ExpensesComponent { //implements OnInit{
-  items: Item[];
-  item= new Item('', 0, '', new Date().toLocaleString());
-  constructor(public navCtrl: NavController, public expensesService: ExpensesService) {
-    this.expensesService = expensesService;
-    this.items = this.expensesService.retrieveExpenses();
+export class ExpensesComponent {
+  public items = [];
+  public item: any = {};
+  constructor(private expensesService: ExpensesService,
+        private nav: NavController,
+        private platform: Platform,
+        private zone: NgZone,
+        private modalCtrl: ModalController) {}
+
+  ionViewDidLoad() {
+      this.platform.ready().then(() => {
+          this.expensesService.initDB();
+
+          this.expensesService.getAll()
+              .then(data => {
+                  this.zone.run(() => {
+                      this.items = data;
+                  });
+              })
+              .catch(console.error.bind(console));
+      });
   }
 
-  addExpense() {
-    this.expensesService.addExpense(this.item);
+  add() {
+    this.item._id = new Date().toISOString();
+    console.log(this.item._id);
+              this.expensesService.add(this.item)
+                  .catch(console.error.bind(console));
   }
 
 }
