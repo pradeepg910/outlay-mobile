@@ -1,7 +1,7 @@
 <div class="bar bar-header bar-dark">
   <div id="title">
     <h1 class="title">{{ today | date:'MMMM' }}-{{ today | date:'y' }}  Expenses</h1>
-    <button ion-button icon-only (click)="addPopover($event)">
+    <button ion-button icon-only (click)="addPopover($event)" autofocus>
   <ion-icon name="add"></ion-icon>
   </button>
   </div>
@@ -9,8 +9,8 @@
     <ion-searchbar (input)="getAll()"></ion-searchbar>
   </ion-toolbar> -->
 
-  <ion-list *ngIf="items.length">
-    <ion-item-sliding *ngFor="let item of items">
+  <ion-list *ngIf="currentItems.length">
+    <ion-item-sliding *ngFor="let item of currentItems">
       <ion-item>
         <h2>{{ item.title }} - {{item.amount}}</h2>
         <p>{{ item.description }}</p>
@@ -22,7 +22,7 @@
       </ion-item-options>
     </ion-item-sliding>
   </ion-list>
-  <span *ngIf="!items.length">{{noExpensesMessage}}</span>
+  <span *ngIf="!currentItems.length">{{noExpensesMessage}}</span>
 
   <button ion-button icon-only (click)="previousMonth($event)">
     <ion-icon name="arrow-dropleft-circle"></ion-icon>

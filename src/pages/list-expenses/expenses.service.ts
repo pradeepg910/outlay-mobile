@@ -23,23 +23,6 @@ export class ExpensesService {
     return this._db.remove(item._id, item._rev);
   }
 
-
-  findByMonthYear(month, year) {
-    return this._db.query(function(doc, emit) {
-      emit([doc.month, doc.year])
-    }, {
-        key: [month, year], include_docs: true
-      }).then(docs => {
-        this._items = docs.rows.map(row => {
-          row.doc.Date = new Date(row.doc.Date);
-          return row.doc;
-        });
-        this._db.changes({ live: true, since: 'now', include_docs: true })
-          .on('change', this.onDatabaseChange);
-        return this._items;
-      });
-  }
-
   getAll() {
     if (!this._items) {
       return this._db.allDocs({ include_docs: true })

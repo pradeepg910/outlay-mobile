@@ -13,6 +13,7 @@ import {ExpensesService} from './expenses.service'
 })
 export class ExpensesComponent {
   public items = [];
+  public currentItems = [];
   public noExpensesMessage = "Nothing spent yet.";
   public today = new Date();
 
@@ -27,18 +28,20 @@ export class ExpensesComponent {
   ionViewDidLoad() {
     this.platform.ready().then(() => {
       this.expensesService.initDB();
-      this.updateItems();
+      this.expensesService.getAll()
+        .then(data => {
+          this.zone.run(() => {
+            this.items = data;
+            this.updateItems();
+          });
+        })
+        .catch(console.error.bind(console));
     });
   }
 
   updateItems() {
-    this.expensesService.findByMonthYear(this.today.getMonth(), this.today.getFullYear())
-      .then(data => {
-        this.zone.run(() => {
-          this.items = data;
-        });
-      })
-      .catch(console.error.bind(console));
+    this.currentItems = this.items.filter(
+      item => (item.month === this.today.getMonth() && item.year === this.today.getFullYear()));
   };
 
   addPopover() {
