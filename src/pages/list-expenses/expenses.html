@@ -9,7 +9,7 @@
     <ion-searchbar (input)="getAll()"></ion-searchbar>
   </ion-toolbar> -->
 
-  <ion-list *ngIf="currentItems.length">
+  <ion-list *ngIf="currrentItemsCount">
     <ion-item-sliding *ngFor="let item of currentItems">
       <ion-item>
         <h2>{{ item.title }} - {{item.amount}}</h2>
@@ -22,15 +22,15 @@
       </ion-item-options>
     </ion-item-sliding>
   </ion-list>
-  <span *ngIf="!currentItems.length">{{noExpensesMessage}}</span>
+  <span *ngIf="!currrentItemsCount">{{noExpensesMessage}}</span>
 
-  <button ion-button icon-only (click)="previousMonth($event)">
+  <button ion-button icon-only (click)="previousMonth($event)" [disabled]="previousButtonDisabled">
     <ion-icon name="arrow-dropleft-circle"></ion-icon>
   </button>
   <button ion-button icon-only (click)="currentMonth($event)">
     <ion-icon name="cash"></ion-icon>
   </button>
-  <button ion-button icon-only (click)="nextMonth($event)">
+  <button ion-button icon-only (click)="nextMonth($event)" [disabled]="nextButtonDisabled">
     <ion-icon name="arrow-dropright-circle"></ion-icon>
   </button>
 </div>

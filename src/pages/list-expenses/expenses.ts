@@ -16,6 +16,9 @@ export class ExpensesComponent {
   public currentItems = [];
   public noExpensesMessage = "Nothing spent yet.";
   public today = new Date();
+  public currrentItemsCount: number;
+  public previousButtonDisabled: boolean;
+  public nextButtonDisabled: boolean;
 
   constructor(private expensesService: ExpensesService,
     private nav: NavController,
@@ -42,6 +45,23 @@ export class ExpensesComponent {
   updateItems() {
     this.currentItems = this.items.filter(
       item => (item.month === this.today.getMonth() && item.year === this.today.getFullYear()));
+    this.currrentItemsCount = this.currentItems.length;
+    this.previousButtonDisabled = this.previousMonthHasItems();
+    this.nextButtonDisabled = this.nextMonthHasItems();
+  };
+
+  previousMonthHasItems() {
+    let date = new Date();
+    date.setMonth(date.getMonth() - 1);
+    return (this.items.filter(
+      item => (item.month === date.getMonth() && item.year === date.getFullYear())).length) === 0;
+  };
+
+  nextMonthHasItems() {
+    let date = new Date();
+    date.setMonth(date.getMonth() + 1);
+    return (this.items.filter(
+      item => (item.month === date.getMonth() && item.year === date.getFullYear())).length) === 0;
   };
 
   addPopover() {
