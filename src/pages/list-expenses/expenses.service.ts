@@ -40,6 +40,22 @@ export class ExpensesService {
     }
   }
 
+
+  findByMonthYear(month, year) {
+    return this._db.query(function(doc, emit) {
+      emit([doc.month, doc.year])
+    }, {
+        key: [month, year], include_docs: true
+      }).then(docs => {
+        this._items = docs.rows.map(row => {
+          row.doc.Date = new Date(row.doc.Date);
+          return row.doc;
+        });
+        this._db.changes({ live: true, since: 'now', include_docs: true })
+          .on('change', this.onDatabaseChange);
+        return this._items;
+      });
+  }
   private onDatabaseChange = (change) => {
     var index = this.findIndex(this._items, change.id);
     var item = this._items[index];

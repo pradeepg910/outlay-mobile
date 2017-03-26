@@ -13,7 +13,7 @@ import {ExpensesService} from './expenses.service'
 })
 export class ExpensesComponent {
   public items = [];
-  public currentItems = [];
+  // public currentItems = [];
   public noExpensesMessage = "Nothing spent yet.";
   public today = new Date();
   public currrentItemsCount: number;
@@ -31,11 +31,13 @@ export class ExpensesComponent {
   ionViewDidLoad() {
     this.platform.ready().then(() => {
       this.expensesService.initDB();
-      this.expensesService.getAll()
+      this.expensesService.findByMonthYear(this.today.getMonth(), this.today.getFullYear())
         .then(data => {
           this.zone.run(() => {
             this.items = data;
-            this.updateItems();
+            this.currrentItemsCount = this.items.length;
+            this.previousButtonDisabled = this.previousMonthHasItems();
+            this.nextButtonDisabled = this.nextMonthHasItems();
           });
         })
         .catch(console.error.bind(console));
@@ -43,25 +45,24 @@ export class ExpensesComponent {
   }
 
   updateItems() {
-    this.currentItems = this.items.filter(
-      item => (item.month === this.today.getMonth() && item.year === this.today.getFullYear()));
-    this.currrentItemsCount = this.currentItems.length;
-    this.previousButtonDisabled = this.previousMonthHasItems();
-    this.nextButtonDisabled = this.nextMonthHasItems();
+    this.expensesService.findByMonthYear(this.today.getMonth(), this.today.getFullYear())
+      .then(data => {
+        this.zone.run(() => {
+          this.items = data;
+          this.currrentItemsCount = this.items.length;
+          this.previousButtonDisabled = this.previousMonthHasItems();
+          this.nextButtonDisabled = this.nextMonthHasItems();
+        });
+      })
+      .catch(console.error.bind(console));
   };
 
   previousMonthHasItems() {
-    let date = new Date();
-    date.setMonth(date.getMonth() - 1);
-    return (this.items.filter(
-      item => (item.month === date.getMonth() && item.year === date.getFullYear())).length) === 0;
+    return false;
   };
 
   nextMonthHasItems() {
-    let date = new Date();
-    date.setMonth(date.getMonth() + 1);
-    return (this.items.filter(
-      item => (item.month === date.getMonth() && item.year === date.getFullYear())).length) === 0;
+    return false;
   };
 
   addPopover() {
