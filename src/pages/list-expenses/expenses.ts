@@ -1,5 +1,6 @@
 import { Component, NgZone } from "@angular/core";
 import { ModalController, NavController, Platform} from 'ionic-angular';
+import * as moment from 'moment';
 
 import { PopoverController } from 'ionic-angular';
 import { AddExpenseComponent } from '../add-expense/add-expense';
@@ -13,35 +14,55 @@ import {ExpensesService} from './expenses.service'
 export class ExpensesComponent {
   public items = [];
   public noExpensesMessage = "Nothing spent yet.";
+  public today = new Date();
 
   constructor(private expensesService: ExpensesService,
-        private nav: NavController,
-        private platform: Platform,
-        private zone: NgZone,
-        private modalCtrl: ModalController,
-        public popoverCtrl: PopoverController) {}
-
-  ionViewDidLoad() {
-      this.platform.ready().then(() => {
-          this.expensesService.initDB();
-
-          this.expensesService.getAll()
-              .then(data => {
-                  this.zone.run(() => {
-                      this.items = data;
-                  });
-              })
-              .catch(console.error.bind(console));
-      });
+    private nav: NavController,
+    private platform: Platform,
+    private zone: NgZone,
+    private modalCtrl: ModalController,
+    public popoverCtrl: PopoverController) {
   }
 
-  addPopover() {
-     let popover = this.popoverCtrl.create(AddExpenseComponent);
-     popover.present();
-   }
+  ionViewDidLoad() {
+    this.platform.ready().then(() => {
+      this.expensesService.initDB();
+      this.updateItems();
+    });
+  }
 
-   delete(item) {
-     console.log("Item: "+item);
-     this.expensesService.delete(item);
-   }
+  updateItems() {
+    this.expensesService.findByMonthYear(this.today.getMonth(), this.today.getFullYear())
+      .then(data => {
+        this.zone.run(() => {
+          this.items = data;
+        });
+      })
+      .catch(console.error.bind(console));
+  };
+
+  addPopover() {
+    let popover = this.popoverCtrl.create(AddExpenseComponent);
+    popover.present();
+  }
+
+  delete(item) {
+    this.expensesService.delete(item);
+  }
+
+  currentMonth() {
+    this.today = new Date();
+    this.updateItems();
+  }
+
+  previousMonth() {
+    this.today = new Date(this.today.setMonth(this.today.getMonth() - 1));
+    this.updateItems();
+  }
+
+  nextMonth() {
+    this.today = new Date(this.today.setMonth(this.today.getMonth() + 1));
+    this.updateItems();
+  }
+
 }

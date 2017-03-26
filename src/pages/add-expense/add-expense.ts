@@ -10,12 +10,18 @@ export class AddExpenseComponent {
   public item: any = {};
 
   constructor(public viewCtrl: ViewController,
-    private expensesService: ExpensesService) {}
+    private expensesService: ExpensesService) { }
 
   add() {
-      this.item._id = new Date().toISOString();
-      this.expensesService.add(this.item)
-                    .catch(console.error.bind(console));
-      this.viewCtrl.dismiss();
-    }
+    let now = new Date();
+    this.item._id = now.toISOString();
+    this.item.month = now.getMonth();
+    this.item.year = now.getFullYear();
+
+    console.log("Item: " + JSON.stringify(this.item));
+
+    this.expensesService.add(this.item)
+      .catch(console.error.bind(console));
+    this.viewCtrl.dismiss();
+  }
 }
