@@ -17,7 +17,11 @@ export class ExpensesService {
 
   add(item) {
         return this._db.put(item);
-    }
+  }
+
+  delete(item) {
+        return this._db.remove(item._id, item._rev);
+  }
 
     getAll() {
           if (!this._items) {

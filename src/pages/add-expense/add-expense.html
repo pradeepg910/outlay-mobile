@@ -1,0 +1,18 @@
+<form (ngSubmit)="add()">
+<h1 class="title">Add Expense</h1>
+<ion-list inset>
+    <ion-item>
+      <ion-label>Title</ion-label>
+      <ion-input type="text" [(ngModel)]="item.title" name="title"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Amount</ion-label>
+      <ion-input type="number" [(ngModel)]="item.amount" name="amount"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Description</ion-label>
+      <ion-textarea [(ngModel)]="item.description" name="description"></ion-textarea>
+    </ion-item>
+    <button ion-button type="submit" color="dark" block>Add</button>
+</ion-list>
+  </form>
